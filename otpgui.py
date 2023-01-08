@@ -4,9 +4,11 @@ import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 import requests
 import json
+import serial
+import keyboard
+import time
 
 BASE_URL = "http://medivend.ethical.in/API/"
-
 
 def nine():
     if 'error' in result.get() or '=' in result.get():
@@ -101,9 +103,18 @@ def otp_verification():
     data = {"otp": result.get(),"machineid":"8517A76F-6C4C-4044-B19C-B5B73D7B0349"}
     headers={'Content-Type': 'application/json'}
     response_info = requests.post(url = BASE_URL+'GetDataByOTP',headers=headers, data = json.dumps(data))
-    print(response_info.json())
     label_response= ttk.Label(mainframe,text=response_info.json(),wraplength=500,bootstyle="light")
     label_response.place(relx=0.35,rely=0.30)
+    ser = serial.Serial(port='COM1', baudrate=9600, bytesize=8, timeout=2, stopbits=serial.STOPBITS_ONE)
+
+    while TRUE:
+        ser.write(response_info.json().encode('Ascii'))
+        receive = ser.readline()
+        print(receive.decode('Ascii'))
+        time.sleep(1)
+        if keyboard.is_pressed('q'):
+            print("Quit Application")
+            break
     
 
 
